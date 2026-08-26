@@ -1,0 +1,7 @@
+{
+  "FLAVOR": "production",
+  "SUPABASE_URL": "https://your-production-project.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "your-production-publishable-key",
+  "GOOGLE_MAPS_API_KEY": "your-restricted-maps-key",
+  "DEMO_MODE": false
+}

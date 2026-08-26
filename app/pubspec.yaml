@@ -1,0 +1,63 @@
+name: readytech
+description: "ReadyTech - On-demand IT service marketplace"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Backend (auth, postgrest, storage, realtime, edge functions)
+  supabase_flutter: ^2.17.2
+
+  # State management
+  flutter_bloc: ^9.1.1
+  bloc: ^9.2.1
+  equatable: ^2.1.0
+
+  # Dependency injection
+  get_it: ^9.2.1
+
+  # Navigation
+  go_router: ^17.5.0
+
+  # Models / code generation
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.12.0
+
+  # Functional error handling (Either / Option)
+  fpdart: ^1.2.0
+
+  # Diagnostics
+  logger: ^2.7.0
+
+  # Connectivity / offline handling
+  connectivity_plus: ^7.3.1
+
+  # Formatting (currency, dates)
+  intl: ^0.20.3
+
+  # HTTP transport types surfaced by the Supabase SDK (ClientException).
+  http: ^1.6.0
+
+  # Image loading
+  cached_network_image: ^3.4.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  very_good_analysis: ^10.1.0
+  build_runner: ^2.15.1
+  freezed: ^3.2.5
+  json_serializable: ^6.14.1
+  mocktail: ^1.0.5
+
+flutter:
+  uses-material-design: true

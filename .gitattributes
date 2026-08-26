@@ -1,0 +1,35 @@
+# Normalise line endings.
+#
+# Without this, a Windows checkout stores CRLF and a macOS one stores LF, and
+# every shared file shows as wholly rewritten the first time the other person
+# touches it. Storing LF in the repository and letting Git convert on checkout
+# keeps diffs about actual changes.
+* text=auto eol=lf
+
+# Windows-only scripts have to keep CRLF to run.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binaries - never convert, never diff.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.ico  binary
+*.ttf  binary
+*.otf  binary
+*.woff binary
+*.woff2 binary
+*.pdf  binary
+*.jks  binary
+*.keystore binary
+*.apk  binary
+*.aab  binary
+*.ipa  binary
+
+# Lockfiles are generated. Keep them in the repository - a reproducible build
+# depends on them - but keep them out of language statistics and review diffs.
+app/pubspec.lock linguist-generated
+admin/package-lock.json linguist-generated

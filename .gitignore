@@ -1,0 +1,86 @@
+# ReadyTech
+#
+# The rules near the top are the ones that matter: a leaked service-role key or
+# ToyyibPay secret is a marketplace-wide incident, not an inconvenience.
+
+# ---------------------------------------------------------------------------
+# Secrets - never commit
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# Compile-time configuration for the Flutter app. Only the examples are tracked.
+app/env/*.json
+!app/env/*.json.example
+
+# Supabase CLI local state and function secrets.
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+supabase/functions/**/.env
+
+# Signing material.
+*.keystore
+*.jks
+*.p12
+*.p8
+*.mobileprovision
+app/android/key.properties
+app/ios/Runner/GoogleService-Info.plist
+app/android/app/google-services.json
+
+# ---------------------------------------------------------------------------
+# Flutter / Dart
+# ---------------------------------------------------------------------------
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.log
+coverage/
+doc/api/
+.pub-cache/
+.pub/
+
+# ---------------------------------------------------------------------------
+# Android
+# ---------------------------------------------------------------------------
+app/android/.gradle/
+app/android/captures/
+app/android/local.properties
+app/android/**/gradle-wrapper.jar
+app/android/.idea/
+*.iml
+
+# ---------------------------------------------------------------------------
+# iOS / macOS
+# ---------------------------------------------------------------------------
+app/ios/Pods/
+app/ios/.symlinks/
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Flutter.podspec
+app/ios/Flutter/Generated.xcconfig
+app/ios/Flutter/flutter_export_environment.sh
+app/ios/Flutter/ephemeral/
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+.DS_Store
+
+# ---------------------------------------------------------------------------
+# Admin dashboard (Next.js, Phase 9)
+# ---------------------------------------------------------------------------
+admin/node_modules/
+admin/.next/
+admin/out/
+admin/.vercel/
+
+# ---------------------------------------------------------------------------
+# Editors
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+*.swp

@@ -1,0 +1,33 @@
+# ReadyTech analysis options.
+#
+# Baseline is very_good_analysis. Rules are relaxed only where they conflict
+# with deliberate project conventions - not to hide real problems.
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "build/**"
+    - ".dart_tool/**"
+  errors:
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    # This is an application, not a published package.
+    public_member_api_docs: false
+
+    # Dependencies are grouped by purpose with comments, which reads better
+    # than one alphabetical block.
+    sort_pub_dependencies: false
+
+    # Formatting is enforced by `dart format`, not by the linter.
+    lines_longer_than_80_chars: false
+
+    # Project style choices.
+    always_use_package_imports: false
+    sort_constructors_first: false
+    always_put_required_named_parameters_first: false
+    flutter_style_todos: false
+    one_member_abstracts: false
