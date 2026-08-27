@@ -209,7 +209,14 @@ Inbucket at <http://127.0.0.1:54324>. Open it, find the message, click the link.
 
 **"ReadyTech is not configured" on launch.** You ran without
 `--dart-define-from-file`, or `development.json` is missing values. The screen
-names them.
+names them. Note that editing `.env` or `.env.example` will not help — the app
+reads `app/env/<flavor>.json`, and it reads it at build time. In VS Code use the
+**ReadyTech (local)** launch configuration, which already carries the flag.
+
+**App starts but cannot reach the local database from an Android emulator.**
+Check the URL is `http://10.0.2.2:54321`, not `127.0.0.1`. Inside an emulator,
+loopback is the emulator itself; `10.0.2.2` is your machine. See
+[app/env/README.md](../app/env/README.md).
 
 **`supabase start` fails.** Docker Desktop is not running, or ports 54321-54324
 are in use. `supabase stop --no-backup` then start again.

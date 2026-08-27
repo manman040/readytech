@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ReadyTech (local)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file", "env/development.json"]
+    },
+    {
+      "name": "ReadyTech (staging)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file", "env/staging.json"]
+    },
+    {
+      "name": "ReadyTech (staging, profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file", "env/staging.json"]
+    }
+  ]
+}

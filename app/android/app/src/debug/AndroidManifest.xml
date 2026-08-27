@@ -4,4 +4,18 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Debug builds only.
+         Local Supabase serves plain HTTP from the developer's machine, and
+         Android has refused cleartext traffic by default since Android 9. The
+         referenced config permits it for the loopback host only - 10.0.2.2 is
+         how an emulator reaches the machine it runs on.
+
+         This manifest is merged into debug builds alone, so a release build
+         keeps Android's default and refuses cleartext outright. Setting
+         usesCleartextTraffic in the main manifest instead would ship that
+         relaxation to real users, which is how an app ends up sending customer
+         data over an unencrypted connection.
+    -->
+    <application android:networkSecurityConfig="@xml/network_security_config" />
 </manifest>
