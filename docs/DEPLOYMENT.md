@@ -185,7 +185,7 @@ unexplained location prompt denies it.
 
 ## Admin console
 
-Phase 9. Deploys to Vercel:
+Deploys to Vercel:
 
 ```bash
 cd admin
@@ -193,10 +193,13 @@ vercel --prod
 ```
 
 Environment variables: `NEXT_PUBLIC_SUPABASE_URL` and
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are client-safe. The service-role key, if
-the console needs one, goes in a server-only variable and is used exclusively in
-server components and route handlers — never in anything prefixed
-`NEXT_PUBLIC_`.
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, both client-safe. That is all it needs:
+the console acts with the signed-in administrator's own session, so it has no
+service-role key to leak. Do not add one.
+
+The first administrator of a new environment is appointed with
+`supabase/snippets/appoint_first_admin.sql` (paste it into the SQL editor);
+after that, administrators appoint each other from the console.
 
 ## Release checklist
 

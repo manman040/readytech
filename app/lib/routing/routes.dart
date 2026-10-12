@@ -19,6 +19,14 @@ abstract final class AppRoute {
   static const technicianHome = _Route('technician-home', '/technician');
   static const adminHome = _Route('admin-home', '/admin');
 
+  // Customer area. These sit under the customer landing's path because the
+  // role guard matches on that prefix, which is what keeps other roles out.
+  static const customerDevices = _Route('customer-devices', '/home/devices');
+  static const customerAddDevice = _Route(
+    'customer-add-device',
+    '/home/devices/new',
+  );
+
   /// Routes reachable without a session.
   static const Set<String> publicPaths = {
     '/sign-in',

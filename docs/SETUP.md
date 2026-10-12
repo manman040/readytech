@@ -202,8 +202,40 @@ land on the customer home screen with the greeting and the Get Help button.
 
 ### Confirming email locally
 
-Local Supabase does not send real mail. Confirmation and reset links go to
-Inbucket at <http://127.0.0.1:54324>. Open it, find the message, click the link.
+Local Supabase does not send real mail. Confirmation and reset links go to the
+local mailbox at <http://127.0.0.1:54324>. Open it, find the message, click the
+link.
+
+After creating an account the app shows **Verify your email**. Open the link
+from the mailbox in any browser - it does not have to be on the device running
+the app - then tap **I have verified**. The app signs you in and takes you to
+the home for the role you registered as: customer or technician.
+
+## 10. Admin console
+
+```bash
+cd admin
+cp .env.example .env.local     # same URL and publishable key as the app,
+                               # but the URL is http://127.0.0.1:54321
+npm install
+npm run dev                    # http://localhost:3001
+```
+
+To administer with your own account rather than a seeded one: sign up in the
+app, confirm the email, then appoint yourself from the database - the one time
+it has to be done that way:
+
+```bash
+docker exec -i supabase_db_readytech psql -U postgres -d postgres \
+  -v email=you@example.com < supabase/snippets/appoint_first_admin.sql
+```
+
+Sign in at <http://localhost:3001>. A technician who registers in the app shows
+up under **Technicians → Not submitted**; approving them there is what lets
+matching offer them work.
+
+If you pulled this without resetting, apply the new migration without wiping
+your data: `npx supabase migration up --local` from the repository root.
 
 ## Troubleshooting
 

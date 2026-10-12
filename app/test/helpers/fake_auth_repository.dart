@@ -64,6 +64,10 @@ class FakeAuthRepository implements AuthRepository {
   int loadProfileCallCount = 0;
   int resendCallCount = 0;
 
+  /// The role the last sign-up asked for, so a test can prove the form's
+  /// choice reached the repository unchanged.
+  UserRole? lastSignUpRole;
+
   /// Pushes a session change, as the real repository does when Supabase
   /// reports one.
   void emitSession(SessionSnapshot snapshot) {
@@ -101,14 +105,21 @@ class FakeAuthRepository implements AuthRepository {
     required String email,
     required String password,
     required String fullName,
+    required UserRole role,
     String? phone,
   }) async {
     signUpCallCount += 1;
+    lastSignUpRole = role;
     if (signUpFailure != null) return failed(signUpFailure!);
 
-    _session = SessionSnapshot(
-      status: SessionStatus.awaitingEmailVerification,
-      email: email,
+    // Announced on the stream as well as returned, as the real repository
+    // does: a sign-up waiting on its link is a session change the app has to
+    // hear about, or it would go on showing the sign-in form.
+    emitSession(
+      SessionSnapshot(
+        status: SessionStatus.awaitingEmailVerification,
+        email: email,
+      ),
     );
     return success(_session);
   }

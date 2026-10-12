@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:readytech/core/bloc/submission_state.dart';
 import 'package:readytech/core/helpers/validators.dart';
 import 'package:readytech/core/utils/result.dart';
+import 'package:readytech/data/models/user_role.dart';
 import 'package:readytech/data/repositories/auth_repository.dart';
 
 /// Drives the sign-up form.
@@ -13,13 +14,22 @@ class SignUpCubit extends Cubit<SubmissionState<String>> {
 
   final AuthRepository _repository;
 
+  /// [role] is what the user asked to be. The backend honours only
+  /// [UserRole.technician], and even then the account starts unverified; the
+  /// default is a customer because that is what most people opening the app
+  /// are.
   Future<void> submit({
     required String fullName,
     required String email,
     required String password,
+    UserRole role = UserRole.customer,
     String? phone,
   }) async {
     if (state.isInProgress) return;
+    assert(
+      role.canSelfRegister,
+      'A ${role.wireName} account cannot be created from the app.',
+    );
 
     emit(const SubmissionState.inProgress());
 
@@ -27,6 +37,7 @@ class SignUpCubit extends Cubit<SubmissionState<String>> {
       email: email,
       password: password,
       fullName: fullName,
+      role: role,
       // Stored in one canonical shape so the same number cannot appear as two
       // different values.
       phone: Validators.normalisePhone(phone),

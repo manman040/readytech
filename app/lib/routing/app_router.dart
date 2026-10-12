@@ -12,6 +12,8 @@ import 'package:readytech/features/auth/view/sign_in_page.dart';
 import 'package:readytech/features/auth/view/sign_up_page.dart';
 import 'package:readytech/features/auth/view/splash_page.dart';
 import 'package:readytech/features/auth/view/verify_email_page.dart';
+import 'package:readytech/features/devices/view/add_device_page.dart';
+import 'package:readytech/features/devices/view/devices_page.dart';
 import 'package:readytech/features/home/view/customer_home_page.dart';
 import 'package:readytech/features/technician/dashboard/view/technician_home_page.dart';
 import 'package:readytech/routing/routes.dart';
@@ -68,6 +70,16 @@ GoRouter createRouter(AuthBloc authBloc) {
         builder: (_, _) => const CustomerHomePage(),
       ),
       GoRoute(
+        path: AppRoute.customerDevices.path,
+        name: AppRoute.customerDevices.name,
+        builder: (_, _) => const DevicesPage(),
+      ),
+      GoRoute(
+        path: AppRoute.customerAddDevice.path,
+        name: AppRoute.customerAddDevice.name,
+        builder: (_, _) => const AddDevicePage(),
+      ),
+      GoRoute(
         path: AppRoute.technicianHome.path,
         name: AppRoute.technicianHome.name,
         builder: (_, _) => const TechnicianHomePage(),
@@ -103,8 +115,13 @@ String? _redirect(AuthState authState, String location) {
       return isPublic ? null : AppRoute.signIn.path;
 
     case AuthEmailVerificationRequired():
-      // Let them reach sign-in, so a wrong address can be abandoned.
-      if (location == AppRoute.signIn.path) return null;
+      // Pinned to the verification screen until the address is confirmed. A
+      // wrong address is abandoned with "Use a different account", which signs
+      // out, so nothing else needs to be reachable - and sign-in in particular
+      // must not be. The sign-up form is *pushed* on top of sign-in, so the
+      // location this redirect sees right after a registration is still
+      // "/sign-in"; letting that through left a new user on the form they had
+      // just submitted, with no hint that an email was waiting.
       return location == AppRoute.verifyEmail.path
           ? null
           : AppRoute.verifyEmail.path;

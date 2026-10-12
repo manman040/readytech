@@ -87,6 +87,33 @@ void main() {
   });
 
   test(
+    'moves a fresh registration to email verification, not back to sign-in',
+    () async {
+      bloc = buildBloc();
+      await expectAfter(const AuthStarted(), isA<AuthUnauthenticated>());
+
+      final settled = expectLater(
+        bloc.stream,
+        emitsInOrder(<Matcher>[isA<AuthEmailVerificationRequired>()]),
+      );
+      // Sign-up returns no session while the address is unconfirmed. The bloc
+      // still has to hear about it, or the router keeps showing sign-in.
+      await repository.signUp(
+        email: 'hafiz@example.com',
+        password: 'secret123',
+        fullName: 'Hafiz Ibrahim',
+        role: UserRole.technician,
+      );
+      await settled;
+
+      expect(
+        (bloc.state as AuthEmailVerificationRequired).email,
+        'hafiz@example.com',
+      );
+    },
+  );
+
+  test(
     'reports a profile load failure without discarding the session',
     () async {
       repository = FakeAuthRepository(initialSession: restoredSession)

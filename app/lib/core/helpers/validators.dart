@@ -86,6 +86,15 @@ abstract final class Validators {
     return digits;
   }
 
+  /// What the customer calls a device - "Work laptop", "Office printer". The
+  /// ceiling matches the `devices_nickname_length` constraint.
+  static String? deviceNickname(String? value) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) return 'Give this device a name';
+    if (trimmed.length > 80) return 'That name is too long';
+    return null;
+  }
+
   /// Free-text problem description. The floor exists because "broken" gives a
   /// technician nothing to prepare with.
   static String? problemDescription(String? value) {

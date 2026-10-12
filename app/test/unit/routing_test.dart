@@ -83,8 +83,21 @@ void main() {
         );
       });
 
-      test('still allows sign in, so a wrong address can be abandoned', () {
-        expect(redirectFor(state, AppRoute.signIn.path), isNull);
+      test('moves a fresh registration on from the auth screens', () {
+        // The sign-up page does not navigate itself; this redirect is what
+        // takes a new customer or technician to the verification screen.
+        expect(
+          redirectFor(state, AppRoute.signUp.path),
+          AppRoute.verifyEmail.path,
+        );
+        // The sign-up form is pushed on top of sign-in, so "/sign-in" is the
+        // location the redirect actually sees after a registration. Letting
+        // it through left a new user on the form they had just submitted. A
+        // wrong address is abandoned by signing out, not by visiting sign-in.
+        expect(
+          redirectFor(state, AppRoute.signIn.path),
+          AppRoute.verifyEmail.path,
+        );
       });
     });
 
@@ -153,6 +166,30 @@ void main() {
           redirectFor(state, AppRoute.adminHome.path),
           AppRoute.customerHome.path,
         );
+      });
+
+      test('lets a customer into the screens under their landing', () {
+        final state = AuthAuthenticated(_profile(UserRole.customer));
+        expect(redirectFor(state, AppRoute.customerDevices.path), isNull);
+        expect(redirectFor(state, AppRoute.customerAddDevice.path), isNull);
+      });
+
+      test('keeps other roles out of the customer screens', () {
+        // The guard matches on the landing's path, so a customer screen that
+        // lived anywhere else would be open to every role.
+        for (final path in [
+          AppRoute.customerDevices.path,
+          AppRoute.customerAddDevice.path,
+        ]) {
+          expect(
+            redirectFor(AuthAuthenticated(_profile(UserRole.technician)), path),
+            AppRoute.technicianHome.path,
+          );
+          expect(
+            redirectFor(AuthAuthenticated(_profile(UserRole.admin)), path),
+            AppRoute.adminHome.path,
+          );
+        }
       });
 
       test('keeps a technician out of the customer and admin areas', () {

@@ -3,7 +3,9 @@ import 'package:readytech/core/config/app_config.dart';
 import 'package:readytech/core/services/app_logger.dart';
 import 'package:readytech/core/services/connectivity_service.dart';
 import 'package:readytech/data/datasources/auth_remote_datasource.dart';
+import 'package:readytech/data/datasources/device_remote_datasource.dart';
 import 'package:readytech/data/repositories/auth_repository.dart';
+import 'package:readytech/data/repositories/device_repository.dart';
 import 'package:readytech/features/auth/bloc/auth_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -46,6 +48,15 @@ Future<void> configureDependencies(AppConfig config) async {
     ..registerLazySingleton<AuthBloc>(
       () => AuthBloc(
         repository: getIt<AuthRepository>(),
+        logger: getIt<AppLogger>(),
+      ),
+    )
+    ..registerLazySingleton<DeviceRemoteDataSource>(
+      () => DeviceRemoteDataSource(getIt<SupabaseClient>()),
+    )
+    ..registerLazySingleton<DeviceRepository>(
+      () => SupabaseDeviceRepository(
+        dataSource: getIt<DeviceRemoteDataSource>(),
         logger: getIt<AppLogger>(),
       ),
     );

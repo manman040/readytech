@@ -94,6 +94,21 @@ void main() {
     });
   });
 
+  group('Validators.deviceNickname', () {
+    test('accepts what people call their devices', () {
+      expect(Validators.deviceNickname('Work laptop'), isNull);
+      expect(Validators.deviceNickname('PC'), isNull);
+      expect(Validators.deviceNickname('x' * 80), isNull);
+    });
+
+    test('rejects blank input and names the database would refuse', () {
+      expect(Validators.deviceNickname(''), isNotNull);
+      expect(Validators.deviceNickname(null), isNotNull);
+      expect(Validators.deviceNickname('   '), isNotNull);
+      expect(Validators.deviceNickname('x' * 81), isNotNull);
+    });
+  });
+
   group('Validators.problemDescription', () {
     test('accepts a description a technician could prepare from', () {
       expect(

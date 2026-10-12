@@ -1,5 +1,6 @@
 import 'package:readytech/core/constants/db.dart';
 import 'package:readytech/data/models/profile.dart';
+import 'package:readytech/data/models/user_role.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Thin transport layer over Supabase Auth and the `profiles` table.
@@ -22,14 +23,17 @@ class AuthRemoteDataSource {
 
   /// Creates the account.
   ///
-  /// `full_name` and `phone` travel in user metadata so the `handle_new_user`
-  /// trigger can populate `profiles` in the same transaction as the insert into
-  /// `auth.users`. That avoids a window where an account exists with no
-  /// profile row.
+  /// `full_name`, `phone` and `role` travel in user metadata so the
+  /// `handle_new_user` trigger can populate `profiles`, `user_roles` and - for
+  /// a technician - `technician_profiles` in the same transaction as the insert
+  /// into `auth.users`. That avoids a window where an account exists with no
+  /// profile row. The trigger honours only `technician` from metadata; every
+  /// other value, including `admin`, becomes a customer.
   Future<AuthResponse> signUp({
     required String email,
     required String password,
     required String fullName,
+    required UserRole role,
     String? phone,
   }) {
     return _auth.signUp(
@@ -37,6 +41,7 @@ class AuthRemoteDataSource {
       password: password,
       data: {
         'full_name': fullName,
+        'role': role.wireName,
         if (phone != null && phone.isNotEmpty) 'phone': phone,
       },
     );

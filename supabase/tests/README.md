@@ -22,7 +22,7 @@ Get-Content supabase\tests\01_business_rules.sql -Raw |
   docker.exe exec -i supabase_db_readytech psql -U postgres -d postgres -q
 ```
 
-Suites 2 and 3 roll back everything they do. Suite 1 leaves a couple of rows
+Suites 2, 3, 4 and 5 roll back everything they do. Suite 1 leaves a couple of rows
 behind, so re-run `supabase db reset` afterwards if you care about the state.
 
 ## The suites
@@ -43,6 +43,26 @@ holding only an *offer* gets the redacted feed and zero rows from
 **`03_lifecycle_walkthrough.sql`** — a complete job from request to warranty,
 performed by real authenticated users, asserting both what must succeed and what
 must be refused at each step.
+
+**`04_technician_registration.sql`** — self-registration through the sign-up
+trigger. Metadata asking for `technician` yields a technician role and an
+unverified technician profile; metadata asking for `admin`, or for nothing,
+yields a customer. Then, as the freshly registered technician: they can finish
+their own profile, cannot approve themselves, are not matchable even when
+available, and can see no customer.
+
+**`05_admin_console.sql`** — the console's backend, as an administrator and as
+the people who must not be one. A customer or technician is refused every
+`admin_*` function and cannot read or write the audit log. As an administrator:
+approving a document verifies the technician and notifies them; suspension
+switches off availability and matchability; nobody can change their own role or
+demote a technician holding a live job; the transition table still decides which
+moves an admin may make; sending a job back to matching releases the technician
+and puts the reason on the timeline; cancelling writes a fee-free cancellation
+record; a decided dispute must say where its job goes and cannot refund more
+than was paid; pricing keeps each value's type and whole sen; removing a review
+or a message keeps the original in the audit log; and the audit log and
+payments stay unwritable for administrators too.
 
 ## Why "as real users" matters
 

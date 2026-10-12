@@ -53,6 +53,22 @@ abstract final class ErrorMapper {
     };
   }
 
+  static const _emailNotConfirmedCodes = {
+    'email_not_confirmed',
+    'provider_email_needs_verification',
+  };
+
+  /// Whether [error] is the backend refusing a sign-in because the address has
+  /// not been confirmed yet.
+  ///
+  /// Exposed because that refusal is sometimes the answer to a question rather
+  /// than a failure: checking whether a freshly registered account has opened
+  /// its link is done by asking to sign in, and "not confirmed" is then simply
+  /// "not yet". Keeping the codes here means that caller does not need to know
+  /// the backend's vocabulary.
+  static bool isEmailNotConfirmed(Object error) =>
+      error is AuthException && _emailNotConfirmedCodes.contains(error.code);
+
   static Failure _mapAuth(AuthException error, String detail) {
     if (error is AuthSessionMissingException) {
       return AuthFailure.sessionExpired(debugDetail: detail);
@@ -60,10 +76,11 @@ abstract final class ErrorMapper {
     if (error is AuthRetryableFetchException) {
       return NetworkFailure(debugDetail: detail);
     }
+    if (isEmailNotConfirmed(error)) {
+      return AuthFailure.emailNotConfirmed(debugDetail: detail);
+    }
 
     return switch (error.code) {
-      'email_not_confirmed' || 'provider_email_needs_verification' =>
-        AuthFailure.emailNotConfirmed(debugDetail: detail),
       'invalid_credentials' => AuthFailure.invalidCredentials(
         debugDetail: detail,
       ),

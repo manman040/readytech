@@ -20,7 +20,7 @@ starts.
 | Delivered | |
 | --- | --- |
 | Flutter app | Clean architecture, Material 3 design system, routing, DI |
-| Authentication | Sign up, sign in, sign out, password reset, email verification, session restore |
+| Authentication | Sign up as a customer or technician, sign in, sign out, password reset, email verification, session restore |
 | Database | 30 tables covering the whole lifecycle, with constraints and indexes |
 | Security | Row Level Security on every table, column-level write protection |
 | State machine | 20 statuses, transition table enforced by a Postgres trigger |
@@ -65,7 +65,12 @@ flutter pub get
 flutter run --dart-define-from-file=env/development.json
 ```
 
-Sign in with `adam@readytech.test` / `ReadyTech123!`.
+Sign in with `adam@readytech.test` / `ReadyTech123!`, or create your own
+account. Choosing **Technician** on the sign-up form lands you on the
+technician side; a new technician starts unverified, so an administrator has to
+approve them before matching offers them work - in the admin console
+(`admin/`, see [admin/README.md](admin/README.md)), which signs in with an
+administrator's own account and holds no service-role key.
 
 Full instructions, including Google Maps and ToyyibPay, are in
 [docs/SETUP.md](docs/SETUP.md).
@@ -76,7 +81,7 @@ Full instructions, including Google Maps and ToyyibPay, are in
 readytech/
   app/          Flutter app - customer and technician
   supabase/     Migrations, RLS policies, Edge Functions, seed data
-  admin/        Next.js admin console (Phase 9)
+  admin/        Next.js admin console
   docs/         Architecture, setup, deployment
 ```
 

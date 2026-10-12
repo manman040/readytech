@@ -27,7 +27,7 @@ That gives three rules the whole codebase is arranged around:
 readytech/
   app/          Flutter mobile app (customer + technician)
   supabase/     Schema, RLS, Edge Functions, seed data
-  admin/        Next.js admin console (Phase 9)
+  admin/        Next.js admin console
   docs/         This directory
 ```
 
@@ -148,6 +148,16 @@ update that changes the assigned technician, the estimate or the arrival code.
 Similarly `technician_profiles_protect_columns()` stops a technician awarding
 themselves a verification or a rating.
 
+**Registration** is the one place a client influences a role. Sign-up metadata
+may ask for `technician`, and `handle_new_user()` honours exactly that value:
+the account gets a `technician` role and an unverified `technician_profiles`
+row in the same transaction. That is safe because the role alone grants
+nothing — matching, visibility to customers and every job-scoped policy key on
+an *approved* verification, which only an administrator can set. `admin` is
+never read from metadata; anything other than `technician` becomes a customer.
+`supabase/tests/04_technician_registration.sql` proves all of this as the
+freshly registered user.
+
 Underneath all three sit **table privileges**, in
 `20260101001600_grants.sql`. Postgres checks the privilege before it evaluates a
 policy, so this is the coarse gate: `payments` grants `SELECT` and nothing else
@@ -221,6 +231,26 @@ where a person has been is a liability with no product use. A customer can read
 it only while that technician is assigned to *their* job and is in
 `ASSIGNED`, `TECHNICIAN_ON_THE_WAY` or `ARRIVED`.
 
+## Admin console
+
+`admin/` is a Next.js app that signs in as an administrator's own Supabase
+account. It holds no service-role key, so it is subject to the same RLS as the
+phone: its reach is the `is_admin()` policies plus the `admin_*` functions in
+`20261005000200_admin_console.sql`.
+
+Every administrative write is one of those functions rather than a direct table
+write, for three reasons. An action like approving a technician touches several
+rows and must not stop halfway. Notifications have no client insert path at all.
+And the one role that can override almost anything is the one whose actions most
+need recording, so each function appends to `admin_audit_log`, which no
+signed-in user, administrators included, can update or delete. The functions
+change status through the normal guard, so the transition table still decides
+what an admin may do; `admin` is just another actor in it.
+
+The console mirrors the app's status labels, chip tones and money formatting in
+`admin/src/lib/domain/`, and its tests read the Dart sources and migrations to
+fail on drift. Same rule as the Dart copy: the mirror renders, it never grants.
+
 ## Preventing double booking
 
 Two technicians tap Accept at the same instant. This is handled three times
@@ -287,7 +317,7 @@ Designed in from the start, implemented when the phase arrives:
 | 6 | Execution: arrival, evidence, diagnosis, quotation, repair | |
 | 7 | Financial: ToyyibPay, verification, receipts, earnings | |
 | 8 | Trust: warranty, reviews, disputes | |
-| 9 | Admin console | |
+| 9 | Admin console: verification, disputes, jobs, accounts, catalogue, pricing, moderation, audit log | **Done** (refunds and payouts wait on 7) |
 | 10 | Polish: performance, accessibility, offline, hardening | |
 
 The Phase 1 schema covers the whole lifecycle, not just what Phase 1 uses. That

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:readytech/core/bloc/submission_state.dart';
 import 'package:readytech/core/errors/failure.dart';
+import 'package:readytech/data/models/user_role.dart';
 import 'package:readytech/features/auth/bloc/login_cubit.dart';
 import 'package:readytech/features/auth/bloc/sign_up_cubit.dart';
 
@@ -89,6 +90,35 @@ void main() {
         await cubit.close();
       },
     );
+
+    test('registers a customer unless told otherwise', () async {
+      final cubit = SignUpCubit(repository);
+
+      await cubit.submit(
+        fullName: 'Adam Rahman',
+        email: 'adam@readytech.test',
+        password: 'secret123',
+      );
+
+      expect(repository.lastSignUpRole, UserRole.customer);
+      await cubit.close();
+    });
+
+    test('passes a technician registration through unchanged', () async {
+      final cubit = SignUpCubit(repository);
+
+      await cubit.submit(
+        fullName: 'Hafiz Ibrahim',
+        email: 'hafiz@example.com',
+        password: 'secret123',
+        phone: '012 345 6789',
+        role: UserRole.technician,
+      );
+
+      expect(cubit.state.isSuccess, isTrue);
+      expect(repository.lastSignUpRole, UserRole.technician);
+      await cubit.close();
+    });
 
     test('reports a rejected sign-up', () async {
       repository.signUpFailure = const AuthFailure(

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:readytech/core/extensions/context_x.dart';
 import 'package:readytech/core/theme/app_spacing.dart';
+import 'package:readytech/core/theme/app_theme.dart';
 import 'package:readytech/core/widgets/app_button.dart';
+import 'package:readytech/core/widgets/app_card.dart';
 import 'package:readytech/core/widgets/upcoming_card.dart';
 import 'package:readytech/features/auth/bloc/auth_bloc.dart';
 import 'package:readytech/features/auth/bloc/auth_state.dart';
 import 'package:readytech/features/home/widgets/home_header.dart';
+import 'package:readytech/routing/routes.dart';
 
 /// The customer's landing screen.
 ///
@@ -52,6 +56,8 @@ class CustomerHomePage extends StatelessWidget {
               onPressed: null,
             ),
             VGap.xxxl,
+            const _MyDevicesCard(),
+            VGap.lg,
             const UpcomingCard(
               items: [
                 Upcoming(
@@ -60,8 +66,8 @@ class CustomerHomePage extends StatelessWidget {
                   'Phase 2',
                 ),
                 Upcoming(
-                  Icons.devices_other_outlined,
-                  'My Devices and their service history',
+                  Icons.history_outlined,
+                  'Service history for each device',
                   'Phase 2',
                 ),
                 Upcoming(
@@ -88,6 +94,56 @@ class CustomerHomePage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The way in to My Devices.
+class _MyDevicesCard extends StatelessWidget {
+  const _MyDevicesCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final semantic = context.semanticColors;
+
+    return AppCard(
+      onTap: () => context.pushNamed(AppRoute.customerDevices.name),
+      child: Row(
+        children: [
+          Container(
+            height: 44,
+            width: 44,
+            decoration: BoxDecoration(
+              color: semantic.neutralContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.devices_other_outlined,
+              size: 22,
+              color: semantic.onNeutralContainer,
+            ),
+          ),
+          HGap.md,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('My Devices', style: context.text.titleSmall),
+                VGap.xxs,
+                Text(
+                  'Your laptops, printers and other equipment',
+                  style: context.text.bodySmall,
+                ),
+              ],
+            ),
+          ),
+          HGap.sm,
+          Icon(
+            Icons.chevron_right_rounded,
+            color: context.colors.onSurfaceVariant,
+          ),
+        ],
       ),
     );
   }
